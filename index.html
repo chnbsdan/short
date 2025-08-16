@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="asset/img/favicon.png"  >
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>短链生成器</title>
+    <title>short</title>
     <style>
       :root {
         --color-primary: #5c7cfa;
@@ -17,38 +17,21 @@
         --border-color: #dee2e6;
       }
 
-     body {
-  position: relative; /* 让伪元素定位用 */
-  max-width: 30rem;
+      body {
+       max-width: 30rem;
   margin-left: auto;
   margin-right: auto;
   padding-left: 2rem;
   padding-right: 2rem;
   color: var(--body-color);
-  background: var(--body-bg) url(" ") no-repeat center center fixed;
+  background: var(--body-bg) url("https://tc.1356666.xyz/file/1751375155852_2039852.jpg") no-repeat center center fixed;
   background-size: cover;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   text-rendering: optimizelegibility;
   -webkit-font-smoothing: antialiased;
-}
-
-/* 渐变蒙版 */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    rgba(255, 255, 255, 0),   /* 顶部较亮 */
-    rgba(255, 255, 255, 0),   /* 中间半透明 */
-    rgba(0, 0, 0, 0)          /* 底部稍暗，增加层次 */
-  );
-  z-index: -1; /* 放在内容后面 */
-}
+      }
 
       a {
         color: var(--color-primary);
@@ -78,70 +61,107 @@ body::before {
       }
 
       input {
-  -webkit-appearance: none;
-  appearance: none;
-  display: block;
-  width: 100%;
-  padding: .5rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  border-radius: .75rem;
-  box-sizing: border-box;
-  color: #33404d;
-  line-height: inherit;
-  font-size: 1rem;
-  background: rgba(255, 255, 255, 0); /* 半透明白色 */
-  backdrop-filter: blur(6px);           /* 毛玻璃效果 */
-  -webkit-backdrop-filter: blur(6px);   /* Safari 支持 */
-  transition: border .3s, box-shadow .3s, background .3s;
-}
+        -webkit-appearance: none;
+        appearance: none;
+        display: block;
+        width: 100%;
+        padding: .5rem 1rem;
+        border: 1px solid var(--border-color);
+        border-radius: .25rem;
+        box-sizing: border-box;
+        color: #33404d;
+        line-height: inherit;
+        font-size: 1rem;
+        transition: border .3s, box-shadow .3s;
+      }
 
-input:focus {
-  box-shadow: 0 0 0 .25rem var(--color-primary-alpha);
-  border-color: var(--color-primary);
-  background: rgba(255, 255, 255, 0);
-  outline: 0;
-}
+      input:focus {
+        box-shadow: 0 0 0 .25rem var(--color-primary-alpha);
+        border-color: var(--color-primary);
+        outline: 0;
+      }
 
-button {
-  appearance: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 5rem;
-  padding: .5rem .75rem;
-  border: 1px solid rgba(255, 255, 255, 0);
-  border-radius: .75rem;
-  background: rgba(92, 124, 250, 0); /* 半透明主题色 */
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 500;
-  line-height: inherit;
-  cursor: pointer;
-  user-select: none;
-  transition: border .3s, background .3s, transform .2s;
-}
+      details {
+        margin: 1rem 0 2rem;
+        border: 1px solid var(--border-color);
+        border-radius: .25rem;
+        transition: background .3s;
+      }
 
-button:hover {
-  border-color: rgba(255, 255, 255, 0);
-  background: rgba(66, 99, 235, 0.85);
-  transform: translateY(-2px); /* 小浮动效果 */
-}
+      details[open] {
+        background: #fff;
+      }
 
-button:focus {
-  box-shadow: 0 0 0 .25rem var(--color-primary-alpha);
-  outline: 0;
-}
+      details summary {
+        padding: .5rem 1rem;
+        font-weight: 500;
+        user-select: none;
+        cursor: pointer;
+        opacity: .8;
+        outline: 0;
+      }
 
-button:disabled {
-  background: rgba(92, 124, 250, 0);
-  border-color: rgba(255, 255, 255, 0.3);
-  opacity: .6;
-  cursor: not-allowed;
-}
+      details div {
+        padding: 1rem;
+        border-top: 1px solid var(--border-color);
+      }
 
+      details small {
+        margin: 0;
+        font-size: .875rem;
+        line-height: 2;
+      }
+
+      button {
+        appearance: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 5rem;
+        padding: .5rem .75rem;
+        border: 1px solid var(--color-primary);
+        border-radius: .25rem;
+        background: var(--color-primary);
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: inherit;
+        cursor: pointer;
+        user-select: none;
+        transition: border .3s, background .3s,;
+      }
+
+      button:hover {
+        border-color: var(--color-primary-dark);
+        background: var(--color-primary-dark);
+      }
+
+      button:focus {
+        box-shadow: 0 0 0 .25rem var(--color-primary-alpha);
+        border-color: var(--color-primary);
+        outline: 0;
+      }
+
+      button:disabled {
+        background: var(--color-primary);
+        border-color: var(--color-primary);
+        opacity: .6;
+        cursor: not-allowed;
+      }
+
+      button.loading::before {
+        content: '';
+        display: inline-block;
+        margin-right: .5rem;
+        border: 2px solid #fff;
+        border-top-color: transparent;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        width: .75rem;
+        height: .75rem;
+        animation: rotate .5s linear infinite;
+      }
 
       footer {
         padding: 1rem;
@@ -184,7 +204,7 @@ button:disabled {
     </style>
   </head>
   <body>
-    <header><h1>BSDAN短链生成器</h1></header>
+    <header><h1>短链生成器</h1></header>
     <main x-data="app" x-cloak>
       <p x-show.transition.opacity="alert" :class="alert?.type" x-text="alert?.message"></p>
       <input placeholder="输入要缩短的网址..." x-model="url" x-ref="url" />
@@ -201,7 +221,6 @@ button:disabled {
        <a href="https://www.hangdn.com" target="_blank">航丹电子</a>
        <a href="mailto:info@bsdan.com">智能家居制造商</a>
     </footer>
-
     <script src="asset/js/alpine.js"></script>
     <script>
       const app = {
@@ -257,4 +276,6 @@ button:disabled {
       }
     </script>
   </body>
-</html>
+</html>    
+
+   
