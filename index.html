@@ -465,47 +465,79 @@
         result: '',
         copied: false,
         
+        // 验证URL格式
         isValidated() {
-          return !/^https?:\/\/.{3,}/.test(this.url)
+          // 要求以http://或https://开头，且长度至少10字符
+          return /^https?:\/\/.{7,}/.test(this.url);
         },
         
+        // 清除结果
         clearResult() {
           this.result = '';
           this.copied = false;
         },
         
+        // 提交表单生成短链
         async submit() {
+          // 验证输入
           if (!this.url) {
             this.showAlert('error', '请输入要缩短的网址');
             return;
           }
 
-          if (this.isValidated()) {
+          if (!this.isValidated()) {
             this.showAlert('error', '网址格式不正确，请以http://或https://开头');
             return;
           }
 
+          // 清除旧状态
           this.alert = null;
           this.loading = true;
+          this.result = '';
+          this.copied = false;
 
           try {
-            // 模拟API请求
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // 准备请求数据
+            const body = { url: this.url };
+            if (this.slug) body.slug = this.slug;
+
+            // 发送API请求
+            const response = await fetch('/create', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(body)
+            });
+
+            // 处理响应
+            const data = await response.json();
             
-            const randomId = Math.random().toString(36).substring(2, 8);
-            const slugPart = this.slug ? this.slug : randomId;
-            this.result = `https://short.url/${slugPart}`;
+            if (!response.ok) {
+              throw new Error(data.message || '服务器返回错误');
+            }
+
+            // 显示结果
+            this.result = data.link || data.shortUrl;
             
-            await this.copyToClipboard();
-            this.showAlert('success', '短链接已生成并复制到剪贴板');
+            // 自动复制到剪贴板
+            const copySuccess = await this.copyToClipboard();
+            
+            if (copySuccess) {
+              this.showAlert('success', '短链接已生成并复制到剪贴板');
+            } else {
+              this.showAlert('warning', '短链接已生成，请手动复制');
+            }
           } catch (error) {
-            this.showAlert('error', '生成短链接时出错: ' + error.message);
+            console.error('生成短链接失败:', error);
+            this.showAlert('error', '生成短链接失败: ' + error.message);
           } finally {
             this.loading = false;
           }
         },
         
+        // 复制到剪贴板
         async copyToClipboard() {
+          if (!this.result) return false;
+          
           try {
             await navigator.clipboard.writeText(this.result);
             this.copied = true;
@@ -517,22 +549,30 @@
             
             return true;
           } catch (err) {
+            console.error('复制失败:', err);
             this.showAlert('error', '无法复制到剪贴板，请手动复制');
             return false;
           }
         },
         
+        // 显示提示消息
         showAlert(type, message) {
           this.alert = {
             type,
             message,
-            icon: type === 'success' ? '✓' : '⚠️'
+            icon: type === 'success' ? '✓' : 
+                  type === 'error' ? '⚠️' : 
+                  'ℹ️'
           };
           
           // 5秒后自动清除提示
-          setTimeout(() => {
-            this.alert = null;
-          }, 5000);
+          if (type !== 'success') {
+            setTimeout(() => {
+              if (this.alert && this.alert.message === message) {
+                this.alert = null;
+              }
+            }, 5000);
+          }
         }
       }));
     });
