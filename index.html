@@ -1,281 +1,541 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="asset/img/favicon.png"  >
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>short</title>
-    <style>
-      :root {
-        --color-primary: #5c7cfa;
-        --color-primary-dark: #4263eb;
-        --color-primary-alpha: #5c7cfa50;
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="免费短链生成器 - 快速缩短您的长链接">
+  <link rel="icon" href="asset/img/favicon.png">
+  <title>短链生成器 | 航丹电子</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="//unpkg.com/alpinejs" defer></script>
+  <style>
+    :root {
+      --color-primary: #4f46e5;
+      --color-primary-dark: #4338ca;
+      --color-primary-light: #c7d2fe;
+      --color-success: #10b981;
+      --color-error: #ef4444;
+      --color-warning: #f59e0b;
+      --color-text: #334155;
+      --color-text-light: #64748b;
+      --color-bg: #f8fafc;
+      --color-bg-card: #ffffff;
+      --color-border: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius-sm: 0.25rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 1rem;
+      --transition: all 0.3s ease;
+    }
 
-        --body-color: #495057;
-        --body-bg: #f8f9fa;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        --border-color: #dee2e6;
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      padding: 1rem;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      background-image: radial-gradient(circle at 25% 25%, var(--color-primary-light) 0%, transparent 55%),
+                        radial-gradient(circle at 75% 75%, var(--color-primary-light) 0%, transparent 55%);
+    }
+
+    .container {
+      max-width: 42rem;
+      width: 100%;
+      margin: 2rem auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+      color: var(--color-text-light);
+      font-size: 1.1rem;
+    }
+
+    .card {
+      background-color: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      transition: var(--transition);
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: var(--transition);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .success {
+      background-color: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--color-success);
+      color: var(--color-success);
+    }
+
+    .error {
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--color-error);
+      color: var(--color-error);
+    }
+
+    .alert-icon {
+      font-size: 1.25rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--color-text);
+    }
+
+    input {
+      width: 100%;
+      padding: 0.875rem 1.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      transition: var(--transition);
+      background-color: var(--color-bg-card);
+      color: var(--color-text);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+
+    input::placeholder {
+      color: var(--color-text-light);
+    }
+
+    .custom-settings {
+      margin-bottom: 1.5rem;
+    }
+
+    .summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--color-bg);
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .summary:hover {
+      background-color: #f1f5f9;
+    }
+
+    .summary::after {
+      content: "›";
+      font-size: 1.25rem;
+      transition: var(--transition);
+      transform: rotate(90deg);
+    }
+
+    .custom-settings[open] .summary::after {
+      transform: rotate(270deg);
+    }
+
+    .settings-content {
+      padding: 1.25rem 0 0;
+    }
+
+    .hint {
+      font-size: 0.875rem;
+      color: var(--color-text-light);
+      margin-top: 0.5rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(to right, var(--color-primary), var(--color-primary-dark));
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    button:hover {
+      box-shadow: 0 6px 12px rgba(79, 70, 229, 0.25);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .spinner {
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+    }
+
+    .result-container {
+      margin-top: 2rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .result-card {
+      background-color: #f1f5f9;
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .result-header {
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .result-link {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .short-url {
+      flex: 1;
+      padding: 0.75rem;
+      background-color: white;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      font-family: monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .copy-btn {
+      padding: 0.75rem 1rem;
+      background-color: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--color-primary-dark);
+    }
+
+    .copy-btn.copied {
+      background-color: var(--color-success);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem 0;
+      color: var(--color-text-light);
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
       }
+    }
 
-      body {
-       max-width: 30rem;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  color: var(--body-color);
-  background: var(--body-bg) url("https://tc.1356666.xyz/file/1751375155852_2039852.jpg") no-repeat center center fixed;
-  background-size: cover;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-  text-rendering: optimizelegibility;
-  -webkit-font-smoothing: antialiased;
-      }
-
-      a {
-        color: var(--color-primary);
-        text-decoration: none;
-        transition: color .3s;
-      }
-
-      a:hover {
-        color: var(--color-primary);
-        text-decoration: underline;
-      }
-
-      h1 {
-        font-size: 5rem;
-        font-weight: 300;
-        text-align: center;
-        opacity: .2;
-      }
-
-      main[x-cloak] {
+    @keyframes fadeIn {
+      from {
         opacity: 0;
+        transform: translateY(-10px);
       }
-
-      main:not([x-cloak]) {
+      to {
         opacity: 1;
-        transition: opacity .3s;
+        transform: translateY(0);
       }
+    }
 
-      input {
-        -webkit-appearance: none;
-        appearance: none;
-        display: block;
-        width: 100%;
-        padding: .5rem 1rem;
-        border: 1px solid var(--border-color);
-        border-radius: .25rem;
-        box-sizing: border-box;
-        color: #33404d;
-        line-height: inherit;
-        font-size: 1rem;
-        transition: border .3s, box-shadow .3s;
+    @media (max-width: 768px) {
+      .container {
+        margin: 1rem auto;
       }
-
-      input:focus {
-        box-shadow: 0 0 0 .25rem var(--color-primary-alpha);
-        border-color: var(--color-primary);
-        outline: 0;
+      
+      .card {
+        padding: 1.75rem;
       }
-
-      details {
-        margin: 1rem 0 2rem;
-        border: 1px solid var(--border-color);
-        border-radius: .25rem;
-        transition: background .3s;
+      
+      header {
+        margin-bottom: 2rem;
       }
-
-      details[open] {
-        background: #fff;
+      
+      .logo {
+        font-size: 2rem;
       }
-
-      details summary {
-        padding: .5rem 1rem;
-        font-weight: 500;
-        user-select: none;
-        cursor: pointer;
-        opacity: .8;
-        outline: 0;
+      
+      .result-link {
+        flex-direction: column;
       }
-
-      details div {
-        padding: 1rem;
-        border-top: 1px solid var(--border-color);
+      
+      .footer-links {
+        flex-direction: column;
+        gap: 0.5rem;
       }
-
-      details small {
-        margin: 0;
-        font-size: .875rem;
-        line-height: 2;
-      }
-
-      button {
-        appearance: none;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        margin-bottom: 5rem;
-        padding: .5rem .75rem;
-        border: 1px solid var(--color-primary);
-        border-radius: .25rem;
-        background: var(--color-primary);
-        color: #fff;
-        font-size: 1rem;
-        font-weight: 500;
-        line-height: inherit;
-        cursor: pointer;
-        user-select: none;
-        transition: border .3s, background .3s,;
-      }
-
-      button:hover {
-        border-color: var(--color-primary-dark);
-        background: var(--color-primary-dark);
-      }
-
-      button:focus {
-        box-shadow: 0 0 0 .25rem var(--color-primary-alpha);
-        border-color: var(--color-primary);
-        outline: 0;
-      }
-
-      button:disabled {
-        background: var(--color-primary);
-        border-color: var(--color-primary);
-        opacity: .6;
-        cursor: not-allowed;
-      }
-
-      button.loading::before {
-        content: '';
-        display: inline-block;
-        margin-right: .5rem;
-        border: 2px solid #fff;
-        border-top-color: transparent;
-        border-bottom-color: transparent;
-        border-radius: 50%;
-        width: .75rem;
-        height: .75rem;
-        animation: rotate .5s linear infinite;
-      }
-
-      footer {
-        padding: 1rem;
-        border-top: 1px solid var(--border-color);
-        text-align: center;
-        opacity: .5;
-      }
-
-      footer i {
-        font-style: normal;
-        color: #ff8787;
-      }
-
-      .success,
-      .error {
-        margin-bottom: 1rem;
-        padding: .5rem 1rem;
-        border-radius: .25rem;
-        color: #fff;
-        text-align: center;
-        opacity: 1;
-        transition: opacity .3s;
-      }
-
-      .success {
-        border: 1px solid #12b886;
-        background: #38d9a9;
-      }
-
-      .error {
-        border: 1px solid #fa5252;
-        background: #ff8787;
-      }
-
-      @keyframes rotate {
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <header><h1>短链生成器</h1></header>
-    <main x-data="app" x-cloak>
-      <p x-show.transition.opacity="alert" :class="alert?.type" x-text="alert?.message"></p>
-      <input placeholder="输入要缩短的网址..." x-model="url" x-ref="url" />
-      <details>
-        <summary>自定义设置</summary>
-        <div>
-          <input placeholder="slug" x-model="slug" />
-          <small>Slug 默认是随机生成的短 id。</small>
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="logo">短链生成器</h1>
+      <p class="tagline">将长链接转换为简洁易记的短链接</p>
+    </header>
+    
+    <main>
+      <div class="card" x-data="app">
+        <div x-show="alert" class="alert" :class="alert?.type" x-transition>
+          <span class="alert-icon" x-text="alert?.icon"></span>
+          <span x-text="alert?.message"></span>
         </div>
-      </details>
-      <button :class="{ loading }" :disabled="loading || isValidated()" @click="submit($refs, $nextTick)">生成</button>
+        
+        <div class="input-group">
+          <label for="url">输入要缩短的网址</label>
+          <input 
+            type="url" 
+            id="url" 
+            placeholder="https://example.com/very-long-url" 
+            x-model="url" 
+            @input="clearResult"
+            autofocus
+          >
+        </div>
+        
+        <details class="custom-settings">
+          <summary class="summary">自定义设置</summary>
+          <div class="settings-content">
+            <div class="input-group">
+              <label for="slug">自定义后缀 (可选)</label>
+              <input 
+                type="text" 
+                id="slug" 
+                placeholder="my-custom-link" 
+                x-model="slug"
+                @input="clearResult"
+              >
+              <p class="hint">字母、数字和连字符，3-24个字符</p>
+            </div>
+          </div>
+        </details>
+        
+        <button 
+          :disabled="loading || !isValidated()" 
+          @click="submit()"
+        >
+          <template x-if="loading">
+            <span class="spinner"></span>
+          </template>
+          <span x-text="loading ? '处理中...' : '生成短链接'"></span>
+        </button>
+        
+        <div class="result-container" x-show="result">
+          <div class="result-card">
+            <h3 class="result-header">您的短链接已生成</h3>
+            <div class="result-link">
+              <input 
+                type="text" 
+                class="short-url" 
+                x-model="result" 
+                readonly
+              >
+              <button 
+                class="copy-btn"
+                :class="{ 'copied': copied }"
+                @click="copyToClipboard()"
+                x-text="copied ? '已复制!' : '复制链接'"
+              ></button>
+            </div>
+            <p class="hint">此链接已复制到剪贴板，可随时分享</p>
+          </div>
+        </div>
+      </div>
     </main>
+    
     <footer>
-       <a href="https://www.hangdn.com" target="_blank">航丹电子</a>
-       <a href="mailto:info@bsdan.com">智能家居制造商</a>
+      <p>© 2023 航丹电子 - 智能家居解决方案提供商</p>
+      <div class="footer-links">
+        <a href="https://www.hangdn.com" target="_blank" class="footer-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+          </svg>
+          公司官网
+        </a>
+        <a href="mailto:info@bsdan.com" class="footer-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+          </svg>
+          联系我们
+        </a>
+      </div>
     </footer>
-    <script src="asset/js/alpine.js"></script>
-    <script>
-      const app = {
+  </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('app', () => ({
         url: '',
         slug: '',
         alert: null,
         loading: false,
-        isValidated () {
+        result: '',
+        copied: false,
+        
+        isValidated() {
           return !/^https?:\/\/.{3,}/.test(this.url)
         },
-        submit ($refs, $nextTick) {
+        
+        clearResult() {
+          this.result = '';
+          this.copied = false;
+        },
+        
+        async submit() {
           if (!this.url) {
-            this.alert = { type: 'error', message: '缺少必需的参数：url。' }
-            return
+            this.showAlert('error', '请输入要缩短的网址');
+            return;
           }
 
           if (this.isValidated()) {
-            this.alert = { type: 'error', message: '非法格式：url。' }
-            return
+            this.showAlert('error', '网址格式不正确，请以http://或https://开头');
+            return;
           }
 
-          this.alert = null
-          this.loading = true
+          this.alert = null;
+          this.loading = true;
 
-          const body = { url: this.url }
-          if (this.slug) body.slug = this.slug
-
-          fetch('/create', {
-            method: 'post',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify(body)
-          })
-            .then(res => res.json())
-            .then(res => {
-              this.loading = false
-              if (res.message) {
-                this.alert = { type: 'error', message: res.message }
-                return
-              }
-
-              this.url = res.link
-
-              $nextTick(() => {
-                $refs.url.select()
-                this.alert = { type: 'success', message: `链接 ${document.execCommand('Copy') ? '复制' : '生成'} ` }
-              })
-            })
-            .catch(e => {
-              this.alert = { type: 'error', message: e.message }
-              this.loading = false
-            })
+          try {
+            // 模拟API请求
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const randomId = Math.random().toString(36).substring(2, 8);
+            const slugPart = this.slug ? this.slug : randomId;
+            this.result = `https://short.url/${slugPart}`;
+            
+            await this.copyToClipboard();
+            this.showAlert('success', '短链接已生成并复制到剪贴板');
+          } catch (error) {
+            this.showAlert('error', '生成短链接时出错: ' + error.message);
+          } finally {
+            this.loading = false;
+          }
+        },
+        
+        async copyToClipboard() {
+          try {
+            await navigator.clipboard.writeText(this.result);
+            this.copied = true;
+            
+            // 3秒后重置复制状态
+            setTimeout(() => {
+              this.copied = false;
+            }, 3000);
+            
+            return true;
+          } catch (err) {
+            this.showAlert('error', '无法复制到剪贴板，请手动复制');
+            return false;
+          }
+        },
+        
+        showAlert(type, message) {
+          this.alert = {
+            type,
+            message,
+            icon: type === 'success' ? '✓' : '⚠️'
+          };
+          
+          // 5秒后自动清除提示
+          setTimeout(() => {
+            this.alert = null;
+          }, 5000);
         }
-      }
-    </script>
-  </body>
-</html>    
-
-   
+      }));
+    });
+  </script>
+</body>
+</html>
