@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="免费短链生成器 - 快速缩短您的长链接">
-  <link rel="icon" href="asset/img/favicon.png">
+  <link rel="icon" href="asset/img/icon1.png">
   <title>短链生成器 | 航丹电子</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -420,7 +420,8 @@
                 @input="clearResult"
                 :class="{ 'invalid': slugError }"
               >
-              <p class="hint">字母、数字和连字符，3-24个字符</p>
+              <!-- 修改为2-24个字符 -->
+              <p class="hint">字母、数字和连字符，2-24个字符</p>
               <div class="error-hint" x-show="slugError" x-text="slugError"></div>
             </div>
           </div>
@@ -509,16 +510,16 @@
           return true;
         },
         
-        // 验证slug格式
+        // 验证slug格式 - 修改为2-24个字符
         validateSlug() {
           this.slugError = '';
           
           // slug是可选的，如果为空则跳过验证
           if (!this.slug) return true;
           
-          // 验证格式：字母、数字和连字符，3-24个字符
-          if (!/^[a-zA-Z0-9-]{3,24}$/.test(this.slug)) {
-            this.slugError = '自定义后缀格式错误：只能包含字母、数字和连字符，长度3-24个字符';
+          // 验证格式：字母、数字和连字符，2-24个字符
+          if (!/^[a-zA-Z0-9-]{2,24}$/.test(this.slug)) {
+            this.slugError = '自定义后缀格式错误：只能包含字母、数字和连字符，长度2-24个字符';
             return false;
           }
           
