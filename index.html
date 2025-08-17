@@ -111,12 +111,19 @@
       color: var(--color-error);
     }
 
+    .warning {
+      background-color: rgba(245, 158, 11, 0.1);
+      border: 1px solid var(--color-warning);
+      color: var(--color-warning);
+    }
+
     .alert-icon {
       font-size: 1.25rem;
     }
 
     .input-group {
       margin-bottom: 1.5rem;
+      position: relative;
     }
 
     label {
@@ -141,6 +148,11 @@
       outline: none;
       border-color: var(--color-primary);
       box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+
+    input.invalid {
+      border-color: var(--color-error);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
     }
 
     input::placeholder {
@@ -186,6 +198,13 @@
       font-size: 0.875rem;
       color: var(--color-text-light);
       margin-top: 0.5rem;
+    }
+
+    .error-hint {
+      color: var(--color-error);
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: none;
     }
 
     button {
@@ -382,8 +401,10 @@
             placeholder="https://example.com/very-long-url" 
             x-model="url" 
             @input="clearResult"
+            :class="{ 'invalid': urlError }"
             autofocus
           >
+          <div class="error-hint" x-show="urlError" x-text="urlError"></div>
         </div>
         
         <details class="custom-settings">
@@ -397,15 +418,17 @@
                 placeholder="my-custom-link" 
                 x-model="slug"
                 @input="clearResult"
+                :class="{ 'invalid': slugError }"
               >
               <p class="hint">字母、数字和连字符，3-24个字符</p>
+              <div class="error-hint" x-show="slugError" x-text="slugError"></div>
             </div>
           </div>
         </details>
         
         <button 
-          :disabled="loading || !isValidated()" 
-          @click="submit()"
+          :disabled="loading" 
+          @click="validateAndSubmit()"
         >
           <template x-if="loading">
             <span class="spinner"></span>
@@ -422,6 +445,8 @@
                 class="short-url" 
                 x-model="result" 
                 readonly
+                @click="$refs.shortUrlInput.select()"
+                x-ref="shortUrlInput"
               >
               <button 
                 class="copy-btn"
@@ -430,7 +455,7 @@
                 x-text="copied ? '已复制!' : '复制链接'"
               ></button>
             </div>
-            <p class="hint">此链接已复制到剪贴板，可随时分享</p>
+            <p class="hint" x-text="copied ? '链接已复制到剪贴板' : '点击复制按钮或选择文本手动复制'"></p>
           </div>
         </div>
       </div>
@@ -464,32 +489,68 @@
         loading: false,
         result: '',
         copied: false,
+        urlError: '',
+        slugError: '',
         
         // 验证URL格式
-        isValidated() {
-          // 要求以http://或https://开头，且长度至少10字符
-          return /^https?:\/\/.{7,}/.test(this.url);
+        validateUrl() {
+          this.urlError = '';
+          
+          if (!this.url) {
+            this.urlError = '请输入要缩短的网址';
+            return false;
+          }
+          
+          if (!/^https?:\/\/.{7,}/.test(this.url)) {
+            this.urlError = '网址格式不正确，请以http://或https://开头';
+            return false;
+          }
+          
+          return true;
+        },
+        
+        // 验证slug格式
+        validateSlug() {
+          this.slugError = '';
+          
+          // slug是可选的，如果为空则跳过验证
+          if (!this.slug) return true;
+          
+          // 验证格式：字母、数字和连字符，3-24个字符
+          if (!/^[a-zA-Z0-9-]{3,24}$/.test(this.slug)) {
+            this.slugError = '自定义后缀格式错误：只能包含字母、数字和连字符，长度3-24个字符';
+            return false;
+          }
+          
+          return true;
         },
         
         // 清除结果
         clearResult() {
           this.result = '';
           this.copied = false;
+          this.urlError = '';
+          this.slugError = '';
+        },
+        
+        // 验证并提交
+        validateAndSubmit() {
+          // 清除旧错误
+          this.clearResult();
+          
+          // 验证输入
+          const isUrlValid = this.validateUrl();
+          const isSlugValid = this.validateSlug();
+          
+          if (!isUrlValid || !isSlugValid) {
+            return;
+          }
+          
+          this.submit();
         },
         
         // 提交表单生成短链
         async submit() {
-          // 验证输入
-          if (!this.url) {
-            this.showAlert('error', '请输入要缩短的网址');
-            return;
-          }
-
-          if (!this.isValidated()) {
-            this.showAlert('error', '网址格式不正确，请以http://或https://开头');
-            return;
-          }
-
           // 清除旧状态
           this.alert = null;
           this.loading = true;
@@ -519,13 +580,10 @@
             this.result = data.link || data.shortUrl;
             
             // 自动复制到剪贴板
-            const copySuccess = await this.copyToClipboard();
+            await this.copyToClipboard();
             
-            if (copySuccess) {
-              this.showAlert('success', '短链接已生成并复制到剪贴板');
-            } else {
-              this.showAlert('warning', '短链接已生成，请手动复制');
-            }
+            // 显示成功消息
+            this.showAlert('success', '短链接已生成并自动复制到剪贴板');
           } catch (error) {
             console.error('生成短链接失败:', error);
             this.showAlert('error', '生成短链接失败: ' + error.message);
@@ -550,7 +608,7 @@
             return true;
           } catch (err) {
             console.error('复制失败:', err);
-            this.showAlert('error', '无法复制到剪贴板，请手动复制');
+            this.showAlert('warning', '无法自动复制，请手动复制链接');
             return false;
           }
         },
