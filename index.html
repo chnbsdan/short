@@ -64,6 +64,13 @@
       margin-bottom: 3rem;
     }
 
+    .logo-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
     .logo {
       font-size: 2.5rem;
       font-weight: 800;
@@ -72,6 +79,61 @@
       background-clip: text;
       color: transparent;
       margin-bottom: 0.5rem;
+    }
+
+    /* 旋转动画关键帧 */
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    /* Logo动画容器 */
+    .logo-wrapper {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        margin-right: 15px;
+    }
+    
+    .logo-wrapper img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        position: relative;
+        z-index: 1;
+        background: white;
+        box-shadow: 0 0 15px rgba(67, 97, 238, 0.1);
+        object-fit: contain;
+    }
+    
+    /* 旋转边框 */
+    .logo-border {
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        right: -5px;
+        bottom: -5px;
+        border-radius: 50%;
+        animation: rotate 4s linear infinite;
+        background: conic-gradient(
+            from 0deg,
+            transparent 0%,
+            var(--color-primary) 20%,
+            rgba(79, 70, 229, 0.7) 40%,
+            transparent 60%,
+            transparent 100%
+        );
+        box-shadow: 0 0 15px rgba(79, 70, 229, 0.4);
+        filter: blur(1px);
+    }
+    
+    /* 内层遮罩 */
+    .logo-border::after {
+        content: '';
+        position: absolute;
+        inset: 5px;
+        border-radius: 50%;
+        background: white;
     }
 
     .tagline {
@@ -376,13 +438,26 @@
         flex-direction: column;
         gap: 0.5rem;
       }
+
+      .logo-wrapper {
+        width: 40px;
+        height: 40px;
+        margin-right: 10px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <h1 class="logo">短链生成器</h1>
+      <div class="logo-container">
+        <!-- 航丹电子科技LOGO与动画 -->
+        <div class="logo-wrapper">
+          <div class="logo-border"></div>
+          <img src="https://tc.1356666.xyz/file/1755410653958_hangdn.png" alt="航丹电子科技LOGO">
+        </div>
+        <h1 class="logo">短链生成器</h1>
+      </div>
       <p class="tagline">将长链接转换为简洁易记的短链接</p>
     </header>
     
