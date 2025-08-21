@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="免费短链生成器 - 快速缩短您的长链接">
+  <link rel="icon" href="asset/img/hangdn.png">
+  <title>短链生成器 | 航丹电子</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="//unpkg.com/alpinejs" defer></script>
+  <style>
+    :root {
+      --color-primary: #4f46e5;
+      --color-primary-dark: #4338ca;
+      --color-primary-light: #c7d2fe;
+      --color-success: #10b981;
+      --color-error: #ef4444;
+      --color-warning: #f59e0b;
+      --color-text: #334155;
+      --color-text-light: #64748b;
+      --color-bg: #f8fafc;
+      --color-bg-card: #ffffff;
+      --color-border: #e2e8f0;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --radius-sm: 0.25rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 1rem;
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.5;
+      padding: 1rem;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-font-smoothing: antialiased;
+      background-image: radial-gradient(circle at 25% 25%, var(--color-primary-light) 0%, transparent 55%),
+                        radial-gradient(circle at 75% 75%, var(--color-primary-light) 0%, transparent 55%);
+    }
+
+    .container {
+      max-width: 42rem;
+      width: 100%;
+      margin: 2rem auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .logo {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+      color: var(--color-text-light);
+      font-size: 1.1rem;
+    }
+
+    .card {
+      background-color: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      transition: var(--transition);
+    }
+
+    .alert {
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: var(--transition);
+      animation: fadeIn 0.3s ease;
+    }
+
+    .success {
+      background-color: rgba(16, 185, 129, 0.1);
+      border: 1px solid var(--color-success);
+      color: var(--color-success);
+    }
+
+    .error {
+      background-color: rgba(239, 68, 68, 0.1);
+      border: 1px solid var(--color-error);
+      color: var(--color-error);
+    }
+
+    .warning {
+      background-color: rgba(245, 158, 11, 0.1);
+      border: 1px solid var(--color-warning);
+      color: var(--color-warning);
+    }
+
+    .alert-icon {
+      font-size: 1.25rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--color-text);
+    }
+
+    input {
+      width: 100%;
+      padding: 0.875rem 1.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      transition: var(--transition);
+      background-color: var(--color-bg-card);
+      color: var(--color-text);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-light);
+    }
+
+    input.invalid {
+      border-color: var(--color-error);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    }
+
+    input::placeholder {
+      color: var(--color-text-light);
+    }
+
+    .custom-settings {
+      margin-bottom: 1.5rem;
+    }
+
+    .summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      background-color: var(--color-bg);
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .summary:hover {
+      background-color: #f1f5f9;
+    }
+
+    .summary::after {
+      content: "›";
+      font-size: 1.25rem;
+      transition: var(--transition);
+      transform: rotate(90deg);
+    }
+
+    .custom-settings[open] .summary::after {
+      transform: rotate(270deg);
+    }
+
+    .settings-content {
+      padding: 1.25rem 0 0;
+    }
+
+    .hint {
+      font-size: 0.875rem;
+      color: var(--color-text-light);
+      margin-top: 0.5rem;
+    }
+
+    .error-hint {
+      color: var(--color-error);
+      font-size: 0.875rem;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 1rem;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(to right, var(--color-primary), var(--color-primary-dark));
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    button:hover {
+      box-shadow: 0 6px 12px rgba(79, 70, 229, 0.25);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .spinner {
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+    }
+
+    .result-container {
+      margin-top: 2rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .result-card {
+      background-color: #f1f5f9;
+      border-radius: var(--radius-sm);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .result-header {
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+
+    .result-link {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .short-url {
+      flex: 1;
+      padding: 0.75rem;
+      background-color: white;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--color-border);
+      font-family: monospace;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .copy-btn {
+      padding: 0.75rem 1rem;
+      background-color: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--color-primary-dark);
+    }
+
+    .copy-btn.copied {
+      background-color: var(--color-success);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem 0;
+      color: var(--color-text-light);
+      font-size: 0.9rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .footer-link {
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .footer-link:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        margin: 1rem auto;
+      }
+      
+      .card {
+        padding: 1.75rem;
+      }
+      
+      header {
+        margin-bottom: 2rem;
+      }
+      
+      .logo {
+        font-size: 2rem;
+      }
+      
+      .result-link {
+        flex-direction: column;
+      }
+      
+      .footer-links {
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="logo">短链生成器</h1>
+      <p class="tagline">将长链接转换为简洁易记的短链接</p>
+    </header>
+    
+    <main>
+      <div class="card" x-data="app">
+        <div x-show="alert" class="alert" :class="alert?.type" x-transition>
+          <span class="alert-icon" x-text="alert?.icon"></span>
+          <span x-text="alert?.message"></span>
+        </div>
+        
+        <div class="input-group">
+          <label for="url">输入要缩短的网址</label>
+          <input 
+            type="url" 
+            id="url" 
+            placeholder="https://example.com/very-long-url" 
+            x-model="url" 
+            @input="clearResult"
+            :class="{ 'invalid': urlError }"
+            autofocus
+          >
+          <div class="error-hint" x-show="urlError" x-text="urlError"></div>
+        </div>
+        
+        <details class="custom-settings">
+          <summary class="summary">自定义设置</summary>
+          <div class="settings-content">
+            <div class="input-group">
+              <label for="slug">自定义后缀 (可选)</label>
+              <input 
+                type="text" 
+                id="slug" 
+                placeholder="my-custom-link" 
+                x-model="slug"
+                @input="clearResult"
+                :class="{ 'invalid': slugError }"
+              >
+              <!-- 修改为2-24个字符 -->
+              <p class="hint">字母、数字和连字符，2-24个字符</p>
+              <div class="error-hint" x-show="slugError" x-text="slugError"></div>
+            </div>
+          </div>
+        </details>
+        
+        <button 
+          :disabled="loading" 
+          @click="validateAndSubmit()"
+        >
+          <template x-if="loading">
+            <span class="spinner"></span>
+          </template>
+          <span x-text="loading ? '处理中...' : '生成短链接'"></span>
+        </button>
+        
+        <div class="result-container" x-show="result">
+          <div class="result-card">
+            <h3 class="result-header">您的短链接已生成</h3>
+            <div class="result-link">
+              <input 
+                type="text" 
+                class="short-url" 
+                x-model="result" 
+                readonly
+                @click="$refs.shortUrlInput.select()"
+                x-ref="shortUrlInput"
+              >
+              <button 
+                class="copy-btn"
+                :class="{ 'copied': copied }"
+                @click="copyToClipboard()"
+                x-text="copied ? '已复制!' : '复制链接'"
+              ></button>
+            </div>
+            <p class="hint" x-text="copied ? '链接已复制到剪贴板' : '点击复制按钮或选择文本手动复制'"></p>
+          </div>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <p>© 2023 航丹电子 - 智能家居解决方案及制造商</p>
+      <div class="footer-links">
+        <a href="https://www.hangdn.com" target="_blank" class="footer-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146zM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5z"/>
+          </svg>
+          公司官网
+        </a>
+        <a href="mailto:sfx@hangdn.com" class="footer-link">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4Zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2Zm13 2.383-4.708 2.825L15 11.105V5.383Zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741ZM1 11.105l4.708-2.897L1 5.383v5.722Z"/>
+          </svg>
+          联系我们
+        </a>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      Alpine.data('app', () => ({
+        url: '',
+        slug: '',
+        alert: null,
+        loading: false,
+        result: '',
+        copied: false,
+        urlError: '',
+        slugError: '',
+        
+        // 验证URL格式
+        validateUrl() {
+          this.urlError = '';
+          
+          if (!this.url) {
+            this.urlError = '请输入要缩短的网址';
+            return false;
+          }
+          
+          if (!/^https?:\/\/.{7,}/.test(this.url)) {
+            this.urlError = '网址格式不正确，请以http://或https://开头';
+            return false;
+          }
+          
+          return true;
+        },
+        
+        // 验证slug格式 - 修改为2-24个字符
+        validateSlug() {
+          this.slugError = '';
+          
+          // slug是可选的，如果为空则跳过验证
+          if (!this.slug) return true;
+          
+          // 验证格式：字母、数字和连字符，2-24个字符
+          if (!/^[a-zA-Z0-9-]{2,24}$/.test(this.slug)) {
+            this.slugError = '自定义后缀格式错误：只能包含字母、数字和连字符，长度2-24个字符';
+            return false;
+          }
+          
+          return true;
+        },
+        
+        // 清除结果
+        clearResult() {
+          this.result = '';
+          this.copied = false;
+          this.urlError = '';
+          this.slugError = '';
+        },
+        
+        // 验证并提交
+        validateAndSubmit() {
+          // 清除旧错误
+          this.clearResult();
+          
+          // 验证输入
+          const isUrlValid = this.validateUrl();
+          const isSlugValid = this.validateSlug();
+          
+          if (!isUrlValid || !isSlugValid) {
+            return;
+          }
+          
+          this.submit();
+        },
+        
+        // 提交表单生成短链
+        async submit() {
+          // 清除旧状态
+          this.alert = null;
+          this.loading = true;
+          this.result = '';
+          this.copied = false;
+
+          try {
+            // 准备请求数据
+            const body = { url: this.url };
+            if (this.slug) body.slug = this.slug;
+
+            // 发送API请求
+            const response = await fetch('/create', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(body)
+            });
+
+            // 处理响应
+            const data = await response.json();
+            
+            if (!response.ok) {
+              throw new Error(data.message || '服务器返回错误');
+            }
+
+            // 显示结果
+            this.result = data.link || data.shortUrl;
+            
+            // 自动复制到剪贴板
+            await this.copyToClipboard();
+            
+            // 显示成功消息
+            this.showAlert('success', '短链接已生成并自动复制到剪贴板');
+          } catch (error) {
+            console.error('生成短链接失败:', error);
+            this.showAlert('error', '生成短链接失败: ' + error.message);
+          } finally {
+            this.loading = false;
+          }
+        },
+        
+        // 复制到剪贴板
+        async copyToClipboard() {
+          if (!this.result) return false;
+          
+          try {
+            await navigator.clipboard.writeText(this.result);
+            this.copied = true;
+            
+            // 3秒后重置复制状态
+            setTimeout(() => {
+              this.copied = false;
+            }, 3000);
+            
+            return true;
+          } catch (err) {
+            console.error('复制失败:', err);
+            this.showAlert('warning', '无法自动复制，请手动复制链接');
+            return false;
+          }
+        },
+        
+        // 显示提示消息
+        showAlert(type, message) {
+          this.alert = {
+            type,
+            message,
+            icon: type === 'success' ? '✓' : 
+                  type === 'error' ? '⚠️' : 
+                  'ℹ️'
+          };
+          
+          // 5秒后自动清除提示
+          if (type !== 'success') {
+            setTimeout(() => {
+              if (this.alert && this.alert.message === message) {
+                this.alert = null;
+              }
+            }, 5000);
+          }
+        }
+      }));
+    });
+  </script>
+</body>
+</html>
